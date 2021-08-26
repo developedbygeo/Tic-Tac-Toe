@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Monoton&family=Open+Sans:wght@300;400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="./styles/style.css" />
+    <title>Tic Tac Toe</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="logo-text">
+          <a href="/index.html">
+            <h1 class="logo">Tic Tac Toe</h1>
+          </a>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <section class="options">
+        <div class="start">
+          <div class="button-wrapper">
+            <button title="Start New Game" class="start-btn">Start Game</button>
+          </div>
+          <div class="select-buttons inactive">
+            <button title="Play vs AI" class="ai select-btn">
+              <i class="fas fa-robot"></i>
+            </button>
+            <button title="Play vs Player" class="players select-btn">
+              <i class="fas fa-user-friends"></i>
+            </button>
+          </div>
+          <div class="ai-difficulty-wrapper inactive">
+            <div class="difficulty-title">
+              <h3>AI Level</h3>
+            </div>
+            <div class="difficulty-options">
+              <select name="difficulty" id="difficulty">
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+                <option value="Extreme">Extreme</option>
+              </select>
+            </div>
+          </div>
+          <div class="player-names inactive">
+            <form action="#">
+              <div class="form-wrap">
+                <input type="text" name="name1" id="name1" required />
+                <label for="name1">Player 1</label>
+              </div>
+              <div class="form-wrap">
+                <input type="text" name="name2" id="name1" required />
+                <label for="name2">Player 2</label>
+              </div>
+              <div class="form-wrap-btn">
+                <button title="Play Now!" class="play-pl">
+                  <i class="fas fa-play"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- <div class="players">
+          <div class="select">
+            <h2 class="players-select">Select players</h2>
+          </div>
+          <div class="ai-difficulty-wrapper">
+            <div class="difficulty-title">
+              <h3>Select AI difficulty</h3>
+            </div>
+            <div class="difficulty-options">
+              <select name="difficulty" id="difficulty">
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
+                <option value="Extreme">Extreme</option>
+              </select>
+            </div>
+          </div>
+          <div class="player-names">
+            <form action="#">
+              <label for="name1">Player 1:</label>
+              <input type="text" name="name1" id="name1" />
+              <label for="name2">Player 2:</label>
+              <input type="text" name="name2" id="name1" />
+            </form>
+          </div>
+        </div> -->
+      </section>
+      <section class="main-game">
+        <div class="wrap-grid">
+          <div class="grid"></div>
+        </div>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>
