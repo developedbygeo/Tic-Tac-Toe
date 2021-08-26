@@ -1,0 +1,40 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+html {
+  font-size: 45.5%;
+}
+body {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 400;
+  color: $fogra;
+}
+p,
+label,
+button {
+  font-size: 2rem;
+}
+input,
+select {
+  font-size: 1.7rem;
+}
+li {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+}
+h1 {
+  font-size: 4.2rem;
+}
+h2 {
+  font-size: 2.6rem;
+}
+h3 {
+  font-size: 2.4rem;
+}
+h4 {
+  font-size: 2rem;
+}
