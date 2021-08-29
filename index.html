@@ -50,6 +50,9 @@
             </div>
             <div class="difficulty-options">
               <select name="difficulty" id="difficulty">
+                <option selected disabled value="select">
+                  Select Difficulty
+                </option>
                 <option value="Easy">Easy</option>
                 <option value="Medium">Medium</option>
                 <option value="Hard">Hard</option>
@@ -75,39 +78,62 @@
             </form>
           </div>
         </div>
-        <!-- <div class="players">
-          <div class="select">
-            <h2 class="players-select">Select players</h2>
-          </div>
-          <div class="ai-difficulty-wrapper">
-            <div class="difficulty-title">
-              <h3>Select AI difficulty</h3>
-            </div>
-            <div class="difficulty-options">
-              <select name="difficulty" id="difficulty">
-                <option value="Easy">Easy</option>
-                <option value="Medium">Medium</option>
-                <option value="Hard">Hard</option>
-                <option value="Extreme">Extreme</option>
-              </select>
-            </div>
-          </div>
-          <div class="player-names">
-            <form action="#">
-              <label for="name1">Player 1:</label>
-              <input type="text" name="name1" id="name1" />
-              <label for="name2">Player 2:</label>
-              <input type="text" name="name2" id="name1" />
-            </form>
-          </div>
-        </div> -->
       </section>
-      <section class="main-game">
+      <section class="main-game inactive-section">
         <div class="wrap-grid">
-          <div class="grid"></div>
+          <div class="grid">
+            <div class="block block-1">
+              <button class="press"></button>
+            </div>
+            <div class="block block-2">
+              <button class="press"></button>
+            </div>
+            <div class="block block-3">
+              <button class="press"></button>
+            </div>
+            <div class="block block-4">
+              <button class="press"></button>
+            </div>
+            <div class="block block-5">
+              <button class="press"></button>
+            </div>
+            <div class="block block-6">
+              <button class="press"></button>
+            </div>
+            <div class="block block-7">
+              <button class="press"></button>
+            </div>
+            <div class="block block-8">
+              <button class="press"></button>
+            </div>
+            <div class="block block-9">
+              <button class="press"></button>
+            </div>
+          </div>
+        </div>
+        <div class="wrap-buttons">
+          <div class="restart">
+            <button class="restart-btn btn">Restart</button>
+          </div>
+          <div class="quit">
+            <button class="quit-btn btn">Quit</button>
+          </div>
         </div>
       </section>
     </main>
+    <footer>
+      <div class="footer-text">
+        <p>&#169;<span class="dev">developedbygeo</span></p>
+      </div>
+      <div class="footer-img">
+        <a
+          class="gh-link"
+          href="https://github.com/developedbygeo"
+          target="_blank"
+          ><i class="fab fa-github"></i
+        ></a>
+      </div>
+    </footer>
     <script src="./app.js"></script>
   </body>
 </html>
