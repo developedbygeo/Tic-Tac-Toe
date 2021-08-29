@@ -1,6 +1,7 @@
 $fogra: #121212;
 $cultured: #eeedf0;
 $indigo: #124469;
+$blue-saph: #37566ede;
 $iris: #4c57e0;
 $carolina: #41a1e0;
 $blue-crayola: #228cd3;
@@ -84,4 +85,9 @@ $maize: #ead071;
       transition-delay: 0s, $duration, 0s;
     }
   }
+}
+@mixin visibility($opacity, $visibility, $transition) {
+  opacity: $opacity;
+  visibility: $visibility;
+  transition: $transition;
 }
