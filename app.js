@@ -1,96 +1,51 @@
-// const startBtn = document.querySelector(".start-btn");
-// const aiBtn = document.querySelector(".ai");
-// const playersBtn = document.querySelector(".players");
-// const labels = document.querySelectorAll(".form-wrap label");
+const gameMap = (() => {
+  const map = ["", "", "", "", "", "", "", "", ""];
+  const setMark = (i, mark) => {
+    if (i > map.length) return;
+    map[i] = mark;
+  };
+  const returnMark = (i, mark) => {
+    if (i > map.length) return;
+    return map[i];
+  };
+  const restart = () => {
+    map.forEach((mark, index, map) => (map[index] = ""));
+  };
+  return { setMark, returnMark, restart };
+})();
+// Player Factory
+const playerFactory = (name, mark) => {
+  const getMark = () => {
+    return mark;
+  };
+  return { getMark };
+};
 
-// labels.forEach((label) => {
-//   label.innerHTML = label.textContent
-//     .split("")
-//     .map(
-//       (letter, index) =>
-//         `<span style="transition-delay:${index * 55}ms">${letter}</span>`
-//     )
-//     .join("");
-// });
-
-// startBtn.addEventListener("click", () => {
-//   const startBtnWrapper = document.querySelector(".button-wrapper");
-//   const selectBtnWrapper = document.querySelector(".select-buttons");
-//   startBtnWrapper.classList.add("inactive");
-//   startBtn.classList.add("btn-inactive");
-//   setTimeout(function () {
-//     selectBtnWrapper.classList.remove("inactive");
-//   }, 400);
-// });
-
-// aiBtn.addEventListener("click", () => {
-//   const selectWrapper = document.querySelector(".select-buttons");
-//   const difficultyWrapper = document.querySelector(".ai-difficulty-wrapper");
-//   selectWrapper.classList.add("inactive");
-//   setTimeout(function () {
-//     difficultyWrapper.classList.remove("inactive");
-//   }, 200);
-// });
-
-// playersBtn.addEventListener("click", () => {
-//   const selectWrapper = document.querySelector(".select-buttons");
-//   const playerMenu = document.querySelector(".player-names");
-//   selectWrapper.classList.add("inactive");
-//   playerMenu.classList.remove("inactive");
-// });
-
-// (function () {
-//   const game = {
-//     players: [],
-//     init: function () {
-//       this.cacheDOM();
-//       this.bindEvents();
-//       this.startGame();
-//       // this.render();
-//     },
-//     cacheDOM: function () {
-//       this.start = document.querySelector(".start");
-//       this.startBtn = this.start.querySelector(".start-btn");
-//       this.aiBtn = document.querySelector(".ai");
-//       this.playersBtn = document.querySelector(".players");
-//       this.difficultySelect = this.start.querySelector("select");
-//       this.inputPlayer1 = this.start.querySelector("#name1");
-//       this.inputPlayer2 = this.start.querySelector("#name2");
-//     },
-//     bindEvents: function () {
-//       this.startBtn.addEventListener(
-//         "click",
-//         this.startGame.bind(this, this.startBtn)
-//       );
-//     },
-//     startGame: function (button) {
-//       console.log(button);
-//       // this.startBtn.parentElement.classList.add('inactive');
-//       // this.startBtn.classList.add('btn-inactive');
-//       // setTimeout(function(){
-//       // })
-//     },
-//   };
-//   game.init();
-// })();
-
-const start = (function () {
+const start = (() => {
+  const gameSettings = {};
   // cache DOM
-  const el = document.querySelector(".start");
-  const startBtnDiv = el.querySelector(".button-wrapper");
-  const allBtns = el.querySelector("button");
-  const selectBtnDiv = el.querySelector(".select-buttons");
-  const aiDifficultyBtnDiv = el.querySelector(".ai-difficulty-wrapper");
-  const playerNamesDiv = el.querySelector(".player-names");
+  const options = document.querySelector(".options");
+  const gameCanvas = document.querySelector(".main-game");
+  const startBtnDiv = options.querySelector(".button-wrapper");
+  const selectBtnDiv = options.querySelector(".select-buttons");
+  const aiDifficultyBtnDiv = options.querySelector(".ai-difficulty-wrapper");
+  const playerNamesDiv = options.querySelector(".player-names");
 
   // bind events
-  startBtnDiv.firstElementChild.addEventListener("click", startGame, true);
-  selectBtnDiv.firstElementChild.addEventListener("click", startGame, true);
-  selectBtnDiv.lastElementChild.addEventListener("click", startGame, true);
+  startBtnDiv.firstElementChild.addEventListener("click", _setGameRules, true);
+  selectBtnDiv.firstElementChild.addEventListener("click", _setGameRules, true);
+  selectBtnDiv.lastElementChild.addEventListener("click", _setGameRules, true);
+
+  // TODO replace with render
+  // renders content
+  function render(before, next, classListAdd, classListRemove) {
+    before.classList.add(`${classListAdd}`);
+    next.classList.remove(`${classListRemove}`);
+  }
 
   // handle menu clicks & remove eventListeners
-  function startGame(e) {
-    const aiSelection = el.querySelector(".ai");
+  function _setGameRules(e) {
+    const aiSelection = options.querySelector(".ai");
     const labels = document.querySelectorAll(".form-wrap label");
     e.target.parentElement.classList.add("inactive");
     e.target.classList.add("btn-inactive");
@@ -99,7 +54,7 @@ const start = (function () {
         selectBtnDiv.classList.remove("inactive");
         startBtnDiv.firstElementChild.removeEventListener(
           "click",
-          startGame,
+          _setGameRules,
           true
         );
         break;
@@ -107,6 +62,7 @@ const start = (function () {
         e.target === aiSelection
           ? aiDifficultyBtnDiv.classList.remove("inactive")
           : playerNamesDiv.classList.remove("inactive"),
+          (gameSettings.mode = "Duo"),
           labels.forEach((label) => {
             label.innerHTML = label.textContent
               .split("")
@@ -120,14 +76,100 @@ const start = (function () {
           });
         selectBtnDiv.firstElementChild.removeEventListener(
           "click",
-          startGame,
+          _setGameRules,
           true
         );
         selectBtnDiv.lastElementChild.removeEventListener(
           "click",
-          startGame,
+          _setGameRules,
+          true
+        );
+        playerNamesDiv.firstElementChild[2].addEventListener(
+          "click",
+          _setDuo,
+          true
+        );
+      case aiDifficultyBtnDiv:
+        aiDifficultyBtnDiv.children[1].children[0].addEventListener(
+          "change",
+          _setDifficulty,
           true
         );
     }
+  }
+  // set AI difficulty
+  function _setDifficulty() {
+    const difficulty = aiDifficultyBtnDiv.children[1].children[0].value;
+    gameSettings.difficulty = difficulty;
+    gameSettings.mode = "Solo";
+    gameSettings.playerX = playerFactory("AI", "X");
+    gameSettings.playerO = playerFactory("You", "O");
+    aiDifficultyBtnDiv.children[1].children[0].value = "";
+    aiDifficultyBtnDiv.children[1].children[0].removeEventListener(
+      "change",
+      _setDifficulty,
+      true
+    );
+    render(options, gameCanvas, "inactive-section", "inactive-section");
+    // options.classList.add("inactive-section");
+    // gameCanvas.classList.remove("inactive-section");
+    render;
+  }
+  // set Duo mode
+  function _setDuo(e) {
+    // e.preventDefault();
+    gameSettings.playerX = playerFactory(
+      playerNamesDiv.firstElementChild[0].value,
+      "X"
+    );
+    gameSettings.playerO = playerFactory(
+      playerNamesDiv.firstElementChild[1].value,
+      "O"
+    );
+    playerNamesDiv.firstElementChild[2].removeEventListener(
+      "click",
+      _setDuo,
+      true
+    );
+    // TODO fix name inputs
+    // options.classList.add("inactive-section");
+    // gameCanvas.classList.remove("inactive-section");
+    // playerNamesDiv.firstElementChild[0].value = "";
+    // playerNamesDiv.firstElementChild[1].value = "";
+    console.log(gameSettings);
+  }
+  gameSettings.round = 0;
+  gameSettings.maxRounds = 9;
+  _handleField();
+
+  function _handleField() {
+    const allFields = document.querySelectorAll(".press");
+    const restart = document.querySelector(".restart-btn");
+    const quit = document.querySelector(".quit-btn");
+
+    // handles player turns
+    const _playerTurn = (round) => {
+      if (round % 2 === 0) {
+        return gameSettings.playerX.getMark();
+      } else {
+        return gameSettings.playerO.getMark();
+      }
+    };
+    // handles field-clicking and updated the gameMap
+    function _useField(e) {
+      const field = e.target;
+      const id = +e.target.parentElement.attributes[1].value;
+      const mark = _playerTurn(gameSettings.round);
+      field.textContent = mark;
+      gameMap.setMark(+id, mark);
+      gameSettings.round++;
+      _blockField(field);
+    }
+    function _blockField(field) {
+      field.removeEventListener("click", _useField);
+    }
+    allFields.forEach((field) => {
+      field.addEventListener("click", _useField);
+    });
   }
 })();
