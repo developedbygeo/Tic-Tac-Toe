@@ -58,7 +58,7 @@ header {
 }
 
 main {
-  height: 90vh;
+  height: 85vh;
 }
 
 nav {
@@ -76,11 +76,80 @@ nav {
 }
 
 .main-game {
-  display: none;
+  opacity: 1;
+  visibility: visible;
+  transition: all 400ms ease;
+  height: 85vh;
+}
+
+.wrap-grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 70%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  height: 90%;
+  width: 90%;
+}
+
+.block {
+  width: 100%;
+  border: 1px solid #eeedf0;
+}
+
+.press {
+  height: 100%;
+  width: 100%;
+  border: none;
+  background: #37566ede;
+}
+
+.wrap-buttons {
+  width: 90%;
+  height: 20%;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr;
+  align-items: center;
+  justify-items: center;
+  grid-gap: 1rem;
+}
+
+.restart,
+.quit {
+  width: 100%;
+}
+
+.btn {
+  padding: 0.7rem 5rem;
+  border: none;
+  border-radius: 0.8rem;
+  color: #eeedf0;
+  width: 90%;
+  margin: auto;
+  cursor: pointer;
+}
+
+.restart-btn {
+  background: #124469;
+}
+
+.quit-btn {
+  background: #d96330;
 }
 
 .start {
   height: 90vh;
+  opacity: 1;
+  visibility: visible;
+  transition: all 400ms ease;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 0.5fr 2.5fr 0.5fr;
@@ -89,6 +158,7 @@ nav {
 .start-inactive {
   opacity: 0;
   visibility: hidden;
+  transition: none;
 }
 
 .button-wrapper,
@@ -294,6 +364,8 @@ nav {
   border-radius: 0.5rem;
   text-align: center;
   appearance: none;
+  background: #eeedf0;
+  color: #124469;
 }
 
 .difficulty-options {
@@ -318,14 +390,14 @@ nav {
 }
 
 .player-names {
-  transition: all 250ms ease-in;
-  opacity: 1;
-  visibility: visible;
   grid-area: 2/1/2/1;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: row;
+  opacity: 1;
+  visibility: visible;
+  transition: all 250ms ease-in;
 }
 
 .player-names form {
@@ -396,6 +468,7 @@ nav {
   width: 100%;
   padding-block: 1rem;
   transition: all 200ms linear;
+  cursor: pointer;
 }
 
 .play-pl::before, .play-pl::after {
@@ -452,9 +525,60 @@ nav {
 .inactive {
   opacity: 0;
   visibility: hidden;
+  transition: none;
+}
+
+.inactive-section {
+  opacity: 0;
+  visibility: hidden;
+  transition: none;
+  display: none;
 }
 
 .btn-inactive {
   pointer-events: none;
+}
+
+.commentary-wrap {
+  height: 7%;
+  width: 90%;
+  margin: auto;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+footer {
+  height: 5vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.footer-text {
+  margin-right: 1rem;
+}
+
+.footer-text p {
+  font-size: 1.6rem;
+  color: #124469;
+}
+
+.footer-text .dev {
+  letter-spacing: 0.15rem;
+  font-style: italic;
+}
+
+.gh-link i {
+  font-size: 1.7rem;
+  color: #124469;
+  transition: all 300ms ease-in-out;
+}
+
+.gh-link i:hover {
+  transform: rotate(360deg) scale(1.1);
 }
 /*# sourceMappingURL=style.css.map */

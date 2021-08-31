@@ -60,6 +60,7 @@ nav {
   color: $cultured;
   width: 90%;
   margin: auto;
+  cursor: pointer;
 }
 .restart-btn {
   background: $indigo;
@@ -195,6 +196,7 @@ nav {
   width: 100%;
   padding-block: 1rem;
   transition: all 200ms linear;
+  cursor: pointer;
   i {
     pointer-events: none;
     font-size: 2rem;
@@ -212,6 +214,13 @@ nav {
 }
 .btn-inactive {
   pointer-events: none;
+}
+.commentary-wrap {
+  height: 7%;
+  width: 90%;
+  margin: auto;
+  font-size: 2rem;
+  @include flex(center, center, row);
 }
 
 footer {
