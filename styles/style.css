@@ -550,6 +550,10 @@ nav {
   flex-direction: row;
 }
 
+.commentary-wrap .playing {
+  margin-right: 2%;
+}
+
 footer {
   height: 5vh;
   display: flex;

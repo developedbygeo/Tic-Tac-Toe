@@ -221,6 +221,9 @@ nav {
   margin: auto;
   font-size: 2rem;
   @include flex(center, center, row);
+  .playing {
+    margin-right: 2%;
+  }
 }
 
 footer {
