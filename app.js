@@ -22,29 +22,27 @@ const playerFactory = (name, mark) => {
   };
   return { name, mark, getName, getMark };
 };
-
-const gameCommentary = () => {
-  // Cache DOM
+const commentaryController = (obj) => {
+  // cache DOM
   const playingSpan = document.querySelector(".playing");
   const commentary = document.querySelector(".commentary");
-  function commentaryHandler() {
-    playingSpan.textContent = start.gameSettings.NextPlayer;
-    commentary.textContent = start.gameSettings.state;
-    if (start.gameSettings.state !== "is playing") {
-      return;
+  function commentaryLive() {
+    commentary.textContent = obj.state;
+    switch (obj.state) {
+      case "is playing":
+        playingSpan.textContent = obj.NextPlayer;
+        break;
+      case "WON!":
+        playingSpan.textContent = obj.winner;
+        break;
+      case "DRAW!":
+        playingSpan.textContent = "";
+        break;
     }
-    console.log(start.gameSettings);
-    // console.log(start.);
-    // console.log(obj);
-    // console.log("hi");
   }
-  return { commentaryHandler };
+  commentaryLive();
 };
-
 const gameController = (obj) => {
-  // TODO check if we can return the following functions and handle the rest through start.
-  const playingSpan = document.querySelector(".playing");
-  const commentary = document.querySelector(".commentary");
   const winConditions = [
     [0, 1, 2],
     [3, 4, 5],
@@ -55,55 +53,82 @@ const gameController = (obj) => {
     [1, 4, 7],
     [2, 5, 8],
   ];
+  // cache DOM
+  const allFields = document.querySelectorAll(".press");
+  //   cache gameSettings
+  let { playerX, playerO } = obj;
 
-  // function _stateHandler() {
-  //   cache.playingSpan.textContent = `${_playerTurn(gameSettings.round)}`;
-  //   cache.commentary = `${gameSettings.state}`;
-  // }
-  // const checkWinner = (currentMap) => {
-  //   return winConditions.some((combination) => {
-  //     return combination.every((index) => {
-  //       return currentMap[index].value === obj.turn;
-  //     });
-  //   });
-  // };
-  // TODO CHECK OUT THIS BAD BOY
-  const checkWinner = () => {
-    gameCommentary(start).commentaryHandler();
+  function _enableFields() {
+    allFields.forEach((field) =>
+      field.addEventListener("click", _useField, true)
+    );
+  }
+
+  function _handleGame() {
+    switch (_checkWinner()) {
+      case true:
+        _disableFields();
+        _handleWin();
+        console.log("Match over - WIN");
+        break;
+      case false:
+        if (obj.round < 9) {
+          console.log("Match not over");
+          return;
+        } else {
+          console.log("Match over - DRAW");
+          _handleDraw();
+        }
+        break;
+    }
+  }
+  function _useField(e) {
+    const field = e.target;
+    const id = +field.parentElement.attributes[1].value;
+    const mark = (obj.turn = _playerTurn());
+    obj.NextPlayer = _nextPlayerTurn();
+    console.log(obj);
+    field.textContent = mark;
+    gameMap.setMark(id, mark);
+    obj.round++;
+    e.target.removeEventListener("click", _useField, true);
+    _handleGame();
+    commentaryController(obj);
+    console.log(obj);
+  }
+  function _disableFields() {
+    allFields.forEach((field) =>
+      field.removeEventListener("click", _useField, true)
+    );
+  }
+  function _handleWin() {
+    [obj.gameOver, obj.state, obj.winner] = ["true", "WON!", _findWinner()];
+  }
+  function _handleDraw() {
+    [obj.gameOver, obj.state] = ["true", "DRAW!"];
+  }
+
+  function _checkWinner() {
     return winConditions.some((combination) => {
-      // return combination.every(
-      //   (index) => gameMap.returnMark(index) === obj.turn
-      // );
       return combination.every(
         (index) => gameMap.returnMark(index) === obj.turn
       );
     });
-  };
-  const announceWinner = (winner) => {
-    playingSpan.textContent = winner;
-    commentary.textContent = ` has won! `;
-  };
+  }
+  function _findWinner() {
+    return obj.turn === "X" ? playerX.getName() : playerO.getName();
+  }
 
-  const findWinner = (playerX, playerO) => {
-    if (checkWinner() === true) {
-      if (playerX.getMark() === obj.turn) {
-        return playerX.getName();
-      } else {
-        return playerO.getName();
-      }
-    }
-  };
-  // TODO possibly create a render func for commentary too
-
-  console.log(checkWinner());
-  // console.log(findWinner(obj.playerX, obj.playerO));
-  // console.log(obj);
-  // console.log(gameMap.map);
-  // announceWinner(findWinner(obj.playerX, obj.playerO));
+  function _playerTurn() {
+    return obj.round % 2 === 0 ? playerX.getMark() : playerO.getMark();
+  }
+  function _nextPlayerTurn() {
+    return obj.round % 2 === 1 ? playerX.getMark() : playerO.getMark();
+  }
+  _enableFields();
 };
-
 const start = (() => {
-  const gameSettings = {
+  let gameSettings = {
     maxRounds: 9,
     gameOver: false,
     round: 0,
@@ -111,179 +136,103 @@ const start = (() => {
     NextPlayer: "",
     state: "is playing",
   };
-  // cache DOM
+  // Cache DOM
   const options = document.querySelector(".options");
   const gameCanvas = document.querySelector(".main-game");
-  const startBtnDiv = options.querySelector(".button-wrapper");
-  const selectBtnDiv = options.querySelector(".select-buttons");
-  const aiDifficultyBtnDiv = options.querySelector(".ai-difficulty-wrapper");
-  const playerNamesDiv = options.querySelector(".player-names");
-  const initDuoButton = playerNamesDiv.querySelector("button");
-  const form = playerNamesDiv.querySelector("form");
-  const player1Input = playerNamesDiv.querySelector("#name1");
-  const player2Input = playerNamesDiv.querySelector("#name2");
-  const restartBtn = document.querySelector(".restart-btn");
-  const quitBtn = document.querySelector(".quit-btn");
-  const playAIBtn = selectBtnDiv.firstElementChild;
-  const playVersusPlayer = selectBtnDiv.lastElementChild;
-  const AiDifficultySelection = aiDifficultyBtnDiv.children[1].children[0];
 
-  // bind initial events
-  startBtnDiv.firstElementChild.addEventListener("click", _setGameRules, true);
-  selectBtnDiv.firstElementChild.addEventListener("click", _setGameRules, true);
-  selectBtnDiv.lastElementChild.addEventListener("click", _setGameRules, true);
-  // TODO replace with render
-  // renders content
-  function renderDiv(before, next, classListAdd, classListRemove) {
+  //   buttons
+  const startBtn = options.querySelector(".start-btn");
+  const playVsAiBtn = options.querySelector(".ai");
+  const playVsPlayerBtn = options.querySelector(".players");
+  const duoPlayBtn = options.querySelector(".play-pl");
+  //  inputs
+  const difficultyAI = options.querySelector("#difficulty");
+  const player1Input = options.querySelector("#name1");
+  const player2Input = options.querySelector("#name2");
+
+  // Bind initial events
+  startBtn.addEventListener("click", _initializeGame, true);
+  playVsAiBtn.addEventListener("click", _initializeGame, true);
+  playVsPlayerBtn.addEventListener("click", _initializeGame, true);
+
+  // render content
+  function _renderDiv(before, classListAdd, next, classListRemove) {
     before.classList.add(`${classListAdd}`);
-    next.classList.remove(`${classListRemove}`);
-  }
-  function renderElement(element, classList, action) {
-    if (!action) {
-      element.classList.add(`${classList}`);
+    if (!next) {
+      return;
     } else {
-      element.classList.remove(`${classList}`);
+      next.classList.remove(`${classListRemove}`);
     }
   }
-  function resetInput(input) {
-    input.value = "";
+  // reset input
+  function _resetInput(input1, input2 = input1) {
+    input1.value = "";
+    input2.value = "";
   }
-  // handle menu clicks & remove eventListeners
-  function _setGameRules(e) {
-    const aiSelection = options.querySelector(".ai");
-    const labels = document.querySelectorAll(".form-wrap label");
-    renderElement(e.target.parentElement, "inactive");
-    // e.target.classList.add("btn-inactive");
-    switch (e.target.parentElement) {
-      case startBtnDiv:
-        selectBtnDiv.classList.remove("inactive");
-        startBtnDiv.firstElementChild.removeEventListener(
-          "click",
-          _setGameRules,
-          true
-        );
-        break;
-      case selectBtnDiv:
-        e.target === aiSelection
-          ? aiDifficultyBtnDiv.classList.remove("inactive")
-          : playerNamesDiv.classList.remove("inactive"),
-          (gameSettings.mode = "Duo"),
-          _animateLabels();
-        playAIBtn.removeEventListener("click", _setGameRules, true);
-        playVersusPlayer.removeEventListener("click", _setGameRules, true);
-        initDuoButton.addEventListener("click", _setDuo, true);
-      case aiDifficultyBtnDiv:
-        AiDifficultySelection.addEventListener("change", _setDifficulty, true);
-    }
-    function _animateLabels() {
-      labels.forEach((label) => {
-        label.innerHTML = label.textContent
-          .split("")
-          .map(
-            (letter, index) =>
-              `<span style="transition-delay:${index * 55}ms">${letter}</span>`
-          )
-          .join("");
-      });
-    }
+  function _animateLabels() {
+    const labels = options.querySelectorAll(".form-wrap label");
+    labels.forEach((label) => {
+      label.innerHTML = label.textContent
+        .split("")
+        .map(
+          (letter, index) =>
+            `<span style="transition-delay:${index * 55}ms">${letter}</span>`
+        )
+        .join("");
+    });
   }
-
-  // set AI difficulty
-  function _setDifficulty() {
-    const difficulty = aiDifficultyBtnDiv.children[1].children[0].value;
-    gameSettings.difficulty = difficulty;
-    gameSettings.mode = "Solo";
-    gameSettings.playerX = playerFactory("AI", "X");
-    gameSettings.playerO = playerFactory("You", "O");
-    resetInput(difficulty);
-    aiDifficultyBtnDiv.children[1].children[0].removeEventListener(
-      "change",
-      _setDifficulty,
-      true
-    );
-    renderDiv(options, gameCanvas, "inactive-section", "inactive-section");
+  function _initializeGame(e) {
+    e.target !== playVsPlayerBtn
+      ? [
+          _renderDiv(
+            e.target.parentElement,
+            "inactive",
+            e.target.parentElement.nextElementSibling,
+            "inactive"
+          ),
+          difficultyAI.addEventListener("change", _setAISettings, true),
+        ]
+      : [
+          _renderDiv(
+            e.target.parentElement,
+            "inactive",
+            e.target.parentElement.nextElementSibling.nextElementSibling,
+            "inactive"
+          ),
+          _animateLabels(),
+          duoPlayBtn.addEventListener("click", _setDuoSettings),
+        ];
+    e.target.removeEventListener("click", _initializeGame, true);
+  }
+  function _setAISettings() {
+    gameSettings.AI = difficultyAI.value;
+    _renderDiv(options, "inactive-section", gameCanvas, "inactive-section");
+    difficultyAI.removeEventListener("change", _setAISettings, true);
+    const [playerX, playerO] = [
+      playerFactory("AI", "X"),
+      playerFactory("You", "O"),
+    ];
+    [gameSettings.playerX, gameSettings.playerO] = [playerX, playerO];
+    _resetInput(difficultyAI);
+    _gameInit();
+  }
+  function _setDuoSettings(e) {
+    const [playerX, playerO] = [
+      playerFactory(player1Input.value, "X"),
+      playerFactory(player2Input.value, "O"),
+    ];
+    [gameSettings.playerX, gameSettings.playerO] = [playerX, playerO];
+    duoPlayBtn.removeEventListener("click", _setDuoSettings, true);
+    [player1Input.value.length && player2Input.value.length] > 0
+      ? [
+          e.preventDefault(),
+          _gameInit(),
+          _resetInput(player1Input, player2Input),
+        ]
+      : e;
+  }
+  function _gameInit() {
+    _renderDiv(options, "inactive-section", gameCanvas, "inactive-section");
     gameController(gameSettings);
   }
-  // set Duo mode
-  function _setDuo(e) {
-    if (player1Input.value.length > 0 && player2Input.value.length > 0) {
-      const playerX = playerFactory(player1Input.value, "X");
-      const playerO = playerFactory(player2Input.value, "O");
-      gameSettings.playerX = playerX;
-      gameSettings.playerO = playerO;
-      renderDiv(options, gameCanvas, "inactive-section", "inactive-section");
-      gameController(gameSettings);
-      e.preventDefault();
-      form.reset();
-      // console.log(gameSettings);
-      _playerTurn(gameSettings.round);
-      gameCommentary(gameSettings).commentaryHandler();
-      // console.log(_playerTurn(gameSettings.round));
-      initDuoButton.removeEventListener("click", _setDuo, true);
-    }
-    // console.log(gameSettings.playerX.getName());
-    // console.log(gameSettings.playerX.getMark());
-  }
-  gameSettings.round = 0;
-  _handleField();
-
-  function _playerTurn(round) {
-    if (round % 2 == 0) {
-      // gameSettings.turn = gameSettings.playerX.getMark();
-      return gameSettings.playerX.getMark();
-    } else {
-      // gameSettings.turn = gameSettings.playerX.getMark();
-      return gameSettings.playerO.getMark();
-    }
-  }
-  function _getNextPlayer() {
-    if (gameSettings.round % 2 === 1) {
-      gameSettings.NextPlayer = gameSettings.playerX.getMark();
-    } else {
-      gameSettings.NextPlayer = gameSettings.playerO.getMark();
-    }
-  }
-
-  function _handleField() {
-    const allFields = document.querySelectorAll(".press");
-    _enableFields();
-
-    // handles field-clicking and updated the gameMap
-    function _useField(e) {
-      const field = e.target;
-      const id = +e.target.parentElement.attributes[1].value;
-      const mark = _playerTurn(gameSettings.round);
-      field.textContent = mark;
-      gameMap.setMark(+id, mark);
-      gameSettings.turn = _playerTurn(gameSettings.round);
-      _getNextPlayer();
-      gameSettings.round++;
-      gameCommentary(gameSettings).commentaryHandler();
-      _blockField(field);
-      gameController(gameSettings);
-    }
-    function _enableFields() {
-      allFields.forEach((field) => {
-        field.addEventListener("click", _useField);
-      });
-    }
-    function _blockField(field) {
-      field.removeEventListener("click", _useField);
-    }
-    function _restart() {
-      allFields.forEach((field) => {
-        field.textContent = "";
-        gameMap.restart();
-        _enableFields();
-        gameSettings.round = 0;
-      });
-    }
-    function _quit() {
-      window.location.href = "/";
-    }
-
-    restartBtn.addEventListener("click", _restart);
-    quitBtn.addEventListener("click", _quit);
-  }
-  return { gameSettings };
 })();
