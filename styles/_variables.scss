@@ -69,7 +69,8 @@ $maize: #ead071;
     border-#{$v-side}-width: $width;
     border-#{$horizontal}-width: $width;
   }
-  &:hover {
+  &:hover,
+  &:active {
     color: $hover;
     &::before,
     &::after {
@@ -90,4 +91,9 @@ $maize: #ead071;
   opacity: $opacity;
   visibility: $visibility;
   transition: $transition;
+}
+@mixin active($color, $background, $shadow) {
+  color: $color;
+  background: $background;
+  box-shadow: $shadow;
 }
