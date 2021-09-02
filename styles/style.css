@@ -108,6 +108,9 @@ nav {
   width: 100%;
   border: none;
   background: #37566ede;
+  color: #eeedf0;
+  font-size: 3rem;
+  font-weight: 600;
 }
 
 .wrap-buttons {
@@ -211,22 +214,22 @@ nav {
   border-right-width: 4px;
 }
 
-.start-btn:hover {
+.start-btn:hover, .start-btn:active {
   color: #41a1e0;
 }
 
-.start-btn:hover::before, .start-btn:hover::after {
+.start-btn:hover::before, .start-btn:hover::after, .start-btn:active::before, .start-btn:active::after {
   border-color: #41a1e0;
   transition: border-color 0s, width 0.35s, height 0.35s;
   width: 100%;
   height: 100%;
 }
 
-.start-btn:hover::before {
+.start-btn:hover::before, .start-btn:active::before {
   transition-delay: 0s, 0s, 0.35s;
 }
 
-.start-btn:hover::after {
+.start-btn:hover::after, .start-btn:active::after {
   transition-delay: 0s, 0.35s, 0s;
 }
 
@@ -269,22 +272,22 @@ nav {
   border-right-width: 4px;
 }
 
-.ai:hover {
+.ai:hover, .ai:active {
   color: #b63f0c;
 }
 
-.ai:hover::before, .ai:hover::after {
+.ai:hover::before, .ai:hover::after, .ai:active::before, .ai:active::after {
   border-color: #b63f0c;
   transition: border-color 0s, width 0.35s, height 0.35s;
   width: 100%;
   height: 100%;
 }
 
-.ai:hover::before {
+.ai:hover::before, .ai:active::before {
   transition-delay: 0s, 0s, 0.35s;
 }
 
-.ai:hover::after {
+.ai:hover::after, .ai:active::after {
   transition-delay: 0s, 0.35s, 0s;
 }
 
@@ -318,22 +321,22 @@ nav {
   border-left-width: 4px;
 }
 
-.players:hover {
+.players:hover, .players:active {
   color: #c39f1d;
 }
 
-.players:hover::before, .players:hover::after {
+.players:hover::before, .players:hover::after, .players:active::before, .players:active::after {
   border-color: #c39f1d;
   transition: border-color 0s, width 0.35s, height 0.35s;
   width: 100%;
   height: 100%;
 }
 
-.players:hover::before {
+.players:hover::before, .players:active::before {
   transition-delay: 0s, 0s, 0.35s;
 }
 
-.players:hover::after {
+.players:hover::after, .players:active::after {
   transition-delay: 0s, 0.35s, 0s;
 }
 
@@ -494,22 +497,22 @@ nav {
   border-left-width: 4px;
 }
 
-.play-pl:hover {
+.play-pl:hover, .play-pl:active {
   color: #4c57e0;
 }
 
-.play-pl:hover::before, .play-pl:hover::after {
+.play-pl:hover::before, .play-pl:hover::after, .play-pl:active::before, .play-pl:active::after {
   border-color: #4c57e0;
   transition: border-color 0s, width 0.35s, height 0.35s;
   width: 100%;
   height: 100%;
 }
 
-.play-pl:hover::before {
+.play-pl:hover::before, .play-pl:active::before {
   transition-delay: 0s, 0s, 0.35s;
 }
 
-.play-pl:hover::after {
+.play-pl:hover::after, .play-pl:active::after {
   transition-delay: 0s, 0.35s, 0s;
 }
 
@@ -543,15 +546,27 @@ nav {
   height: 7%;
   width: 90%;
   margin: auto;
-  font-size: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: row;
 }
 
-.commentary-wrap .playing {
-  margin-right: 2%;
+.commentary-wrap p,
+.commentary-wrap span {
+  font-size: 2rem;
+  font-family: "Open Sans", sans-serif;
+}
+
+.commentary-wrap span {
+  font-weight: 600;
+  color: #124469;
+  margin-right: 2.5%;
+}
+
+.commentary-wrap p {
+  font-weight: 400;
+  color: #4c57e0;
 }
 
 footer {

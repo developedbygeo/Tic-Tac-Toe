@@ -38,6 +38,9 @@ nav {
   width: 100%;
   border: none;
   background: $blue-saph;
+  color: $cultured;
+  font-size: 3rem;
+  font-weight: 600;
 }
 .wrap-buttons {
   width: 90%;
@@ -219,11 +222,21 @@ nav {
   height: 7%;
   width: 90%;
   margin: auto;
-  font-size: 2rem;
-  @include flex(center, center, row);
-  .playing {
-    margin-right: 2%;
+  p,
+  span {
+    font-size: 2rem;
+    font-family: "Open Sans", sans-serif;
   }
+  span {
+    font-weight: 600;
+    color: $indigo;
+    margin-right: 2.5%;
+  }
+  p {
+    font-weight: 400;
+    color: $iris;
+  }
+  @include flex(center, center, row);
 }
 
 footer {
