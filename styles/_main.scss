@@ -18,6 +18,7 @@ nav {
 }
 .main-game {
   @include visibility(1, visible, all 400ms ease);
+  display: block;
   height: 85vh;
 }
 .wrap-grid {
