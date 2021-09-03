@@ -8,10 +8,17 @@ const gameMap = (() => {
     if (i > map.length) return;
     return map[i];
   };
-  const restart = () => {
-    map.forEach((mark, index, map) => (map[index] = ""));
+  const findEmpty = () => {
+    const unselectedArray = [0];
+    map.reduce(function (a, mark, i) {
+      if (mark.length === 0) unselectedArray.push(i);
+    });
+    return unselectedArray;
   };
-  return { map, setMark, returnMark, restart };
+  const restart = () => {
+    map.forEach((mark, i, map) => (map[i] = ""));
+  };
+  return { map, setMark, returnMark, findEmpty, restart };
 })();
 const playerFactory = (name, mark) => {
   const getMark = () => {
@@ -105,17 +112,16 @@ const gameController = (obj) => {
   const quitBtn = document.querySelector(".quit-btn");
   //   cache gameSettings
   let { playerX, playerO } = obj;
-
   // Binding events
+  // window.addEventListener("load", _enableFields);
   restartBtn.addEventListener("click", _restart, true);
   quitBtn.addEventListener("click", _quit, true);
-
   function _enableFields() {
     switch (obj.mode) {
       case "AI":
         _turnHandlerAI();
         allFields.forEach((field) =>
-          field.addEventListener("click", _useFieldAI, true)
+          field.addEventListener("click", _useFieldSolo, true)
         );
         break;
       case "Duo":
@@ -125,6 +131,13 @@ const gameController = (obj) => {
         break;
     }
   }
+  // const _enableFields = () => {
+  //   window.addEventListener("load", () => {
+  //     allFields.forEach((field) =>
+  //       field.addEventListener("click", _useFieldSolo)
+  //     );
+  //   });
+  // };
 
   function _handleGame() {
     switch (_checkWinner()) {
@@ -161,37 +174,17 @@ const gameController = (obj) => {
       field.removeEventListener("click", _useFieldDuo, true)
     );
   }
+  // BUG on restart, _useFieldSolo e is undefined, as there is no event going on.
+  // need to fix that
 
-  // function _useFieldAI(e) {
-  //   const field = e.target;
-  //   const id = +field.parentElement.attributes[1].value;
-  //   const mark = obj.playerO.getMark();
-  //   obj.turn = _playerTurn();
-  //   // let check = setInterval(checkRound, 2000);
-  //   field.textContent = mark;
-  //   gameMap.setMark(id, mark);
-  //   field.removeEventListener("click", _useFieldAI, true);
-  //   _handleGame();
-  //   obj.round++;
-  //   commentaryController(obj);
-  //   // console.log(obj);
-  //   console.log(gameMap.map);
-
-  //   // _basicAI();
-  //   // }
-  //   // obj.NextPlayer = _nextPlayerTurn();
-
-  //   // console.log(obj);
-  //   console.log(gameMap.map);
-  //   // }
-  // }
-  // TODO could add a bridge function on eventclick,
+  // TODO could skip the useFieldAI for the event listeners and go straight to _useFieldSolo
+  // the buttons not played by the player and played by AI will be disabled either way
   function _useFieldAI(e) {
     // TODO could add distinction about ai levels here
-    // _enableFields();
+
     const field = e.target;
     const id = e.target.parentElement.attributes[1].value;
-    _useFieldSolo(field, id);
+    _useFieldSolo(e);
     // _turnHandlerAI();
 
     // console.log(_playerTurn());
@@ -199,50 +192,83 @@ const gameController = (obj) => {
     // code goes here and basicAI is the last invocation
     // _basicAI();
   }
+  // gets an array of empty indices and comes up with a random spot to play
   function _basicAI() {
-    let selectedField;
-    const mark = obj.playerX.getMark();
-    const filtered = gameMap.map.filter((field) => field.length === 0);
-    const maxIndex = filtered.length;
-    // TODO replace filtered with a function to check for the empty fields in the gamemap.
-    // TODO check isEmpty function in the AiFactory
-    const id = Math.floor(Math.random() * (maxIndex - 1 + 1) + 1);
+    // TODO put filtered in another function - RestartFunc1
+    let filtered = gameMap.findEmpty();
+    filtered = filtered.sort(function (a, b) {
+      return a - b;
+    });
+    const id = _.sampleSize(filtered, 1);
     console.log(`Selected ID is ${id}`);
-    // _disableFields();
-    selectedField = document.getElementById(`${id}`);
-    selectedField.firstElementChild.textContent = mark;
-    gameMap.setMark(id, mark);
-    obj.turn = _playerTurn();
-    obj.round++;
-    console.log(obj.round);
-    selectedField.firstElementChild.removeEventListener(
-      "click",
-      _useFieldAI,
-      true
-    );
-    _handleGame();
+    console.log(`ID ${id} has been removed`);
+    console.log(filtered);
+    arrayRemove(filtered, id);
+    _disableFields();
+    // Put the whole timeout in a separate func - RestartFunc2
+    setTimeout(() => {
+      _move(id);
+      console.log(obj);
+      _handleGame();
+      commentaryController(obj);
+    }, 1500);
+    // _move(id);
+    // arrayRemove(filtered, id);
     // console.log(obj);
-    // console.log(gameMap.map);
-    commentaryController(obj);
-
+    // _handleGame();
+    // commentaryController(obj);
     console.log(_playerTurn());
   }
-  function _turnHandlerAI() {
-    _playerTurn() === "X" ? _basicAI() : _useFieldSolo();
+
+  function arrayRemove(arr, value) {
+    return arr.filter(function (positions) {
+      return positions != value;
+    });
   }
-  function _useFieldSolo(field, id) {
-    const target = field;
+  // TODO replace the lines in _basicAI() with the following:
+  function _isEmpty(field) {
+    return field.length === 0;
+  }
+  function _fillField(index) {
+    const selectedField = document.getElementById(`${index}`);
+    const mark = obj.playerX.getMark();
+    gameMap.setMark(index, mark);
+    selectedField.firstElementChild.textContent = mark;
+  }
+  function _removeEventListener(index) {
+    const selectedField = document.getElementById(`${index}`);
+    selectedField.removeEventListener("click", _useFieldAI, true);
+  }
+  function _move(index) {
+    if (!_isEmpty(gameMap.map[index])) return null;
+    _fillField(index);
+    _removeEventListener(index);
+    obj.round++;
+    [obj.turn, obj.NextPlayer] = ["X", "O"];
+  }
+  function _turnHandlerAI() {
+    // _playerTurn() === "X" ? _basicAI() : _useFieldSolo();
+    if (_playerTurn() === "X") {
+      _basicAI();
+    } else {
+      _useFieldSolo();
+    }
+  }
+  function _useFieldSolo(e) {
+    if (e === undefined) return;
+    const target = e.target;
+    const id = e.target.parentElement.attributes[1].value;
     const mark = (obj.turn = _playerTurn());
     obj.NextPlayer = _nextPlayerTurn();
-    field.innerText = mark;
+    target.textContent = mark;
     obj.state = "is playing";
     gameMap.setMark(id, mark);
-    field.removeEventListener("click", _useFieldAI, true);
+    target.removeEventListener("click", _useFieldAI, true);
+    console.log(obj);
     obj.round++;
     _handleGame();
     commentaryController(obj);
     _turnHandlerAI();
-    console.log(obj);
   }
 
   function _handleWin() {
@@ -293,8 +319,15 @@ const gameController = (obj) => {
     allFields.forEach((field) => (field.textContent = ""));
     gameMap.restart();
     _enableFields();
-    [obj.round, obj.state] = [0, ""];
+    [obj.round, obj.state, obj.turn, obj.NextPlayer] = [0, "is playing", "X"];
     commentaryController(obj);
+    // BUG - on restart, AI plays twice
+    // Possible Fix  - RestartFunc1, RestartFunc2 instead of _basicAI
+    if (obj.mode === "AI") {
+      _basicAI();
+    } else {
+      _useFieldDuo();
+    }
   }
   function _quit() {
     window.location.href = "/";
@@ -302,6 +335,7 @@ const gameController = (obj) => {
   }
   _enableFields();
 };
+
 const start = (() => {
   let gameSettings = {
     maxRounds: 9,
