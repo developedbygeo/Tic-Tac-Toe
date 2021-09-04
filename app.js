@@ -9,11 +9,15 @@ const gameMap = (() => {
     return map[i];
   };
   const findEmpty = () => {
-    const unselectedArray = [0];
-    map.reduce(function (a, mark, i) {
-      if (mark.length === 0) unselectedArray.push(i);
+    let unselected = [];
+    let i;
+    map.forEach(function (x, index) {
+      if (x.length === 0) {
+        i = index;
+        unselected.push(i);
+      }
     });
-    return unselectedArray;
+    return unselected;
   };
   const restart = () => {
     map.forEach((mark, i, map) => (map[i] = ""));
@@ -113,7 +117,6 @@ const gameController = (obj) => {
   //   cache gameSettings
   let { playerX, playerO } = obj;
   // Binding events
-  // window.addEventListener("load", _enableFields);
   restartBtn.addEventListener("click", _restart, true);
   quitBtn.addEventListener("click", _quit, true);
   function _enableFields() {
@@ -131,13 +134,11 @@ const gameController = (obj) => {
         break;
     }
   }
-  // const _enableFields = () => {
-  //   window.addEventListener("load", () => {
-  //     allFields.forEach((field) =>
-  //       field.addEventListener("click", _useFieldSolo)
-  //     );
-  //   });
-  // };
+  function _enableFieldsAI() {
+    allFields.forEach((field) =>
+      field.addEventListener("click", _useFieldSolo, true)
+    );
+  }
 
   function _handleGame() {
     switch (_checkWinner()) {
@@ -146,7 +147,7 @@ const gameController = (obj) => {
         _handleWin();
         break;
       case false:
-        if (obj.round < 10) {
+        if (obj.round < 9) {
           return;
         } else {
           _handleDraw();
@@ -155,6 +156,7 @@ const gameController = (obj) => {
     }
   }
   function _useFieldDuo(e) {
+    if (!e) return;
     const field = e.target;
     const id = +field.parentElement.attributes[1].value;
     const mark = (obj.turn = _playerTurn());
@@ -169,58 +171,45 @@ const gameController = (obj) => {
     commentaryController(obj);
     console.log(obj);
   }
-  function _disableFields() {
+  function _disableFields(func = _useFieldDuo) {
     allFields.forEach((field) =>
-      field.removeEventListener("click", _useFieldDuo, true)
+      field.removeEventListener("click", func, true)
     );
   }
-  // BUG on restart, _useFieldSolo e is undefined, as there is no event going on.
-  // need to fix that
-
-  // TODO could skip the useFieldAI for the event listeners and go straight to _useFieldSolo
-  // the buttons not played by the player and played by AI will be disabled either way
   function _useFieldAI(e) {
     // TODO could add distinction about ai levels here
-
-    const field = e.target;
-    const id = e.target.parentElement.attributes[1].value;
     _useFieldSolo(e);
-    // _turnHandlerAI();
-
-    // console.log(_playerTurn());
-    // player click etc
-    // code goes here and basicAI is the last invocation
-    // _basicAI();
   }
   // gets an array of empty indices and comes up with a random spot to play
   function _basicAI() {
-    // TODO put filtered in another function - RestartFunc1
-    let filtered = gameMap.findEmpty();
-    filtered = filtered.sort(function (a, b) {
-      return a - b;
-    });
-    const id = _.sampleSize(filtered, 1);
+    const id = _.sampleSize(_findEmptyPositions(), 1);
     console.log(`Selected ID is ${id}`);
+    _arrayRemove(_findEmptyPositions(), id);
     console.log(`ID ${id} has been removed`);
-    console.log(filtered);
-    arrayRemove(filtered, id);
-    _disableFields();
-    // Put the whole timeout in a separate func - RestartFunc2
+    console.log(`Current map state: ${_findEmptyPositions()}`);
+    _disableFields(_useFieldSolo);
     setTimeout(() => {
       _move(id);
       console.log(obj);
       _handleGame();
       commentaryController(obj);
-    }, 1500);
-    // _move(id);
-    // arrayRemove(filtered, id);
-    // console.log(obj);
-    // _handleGame();
-    // commentaryController(obj);
+    }, 550);
+    _enableFieldsAI();
     console.log(_playerTurn());
   }
 
-  function arrayRemove(arr, value) {
+  function _findEmptyPositions() {
+    const filteredSorted = _updateEmptyPositions().sort(function (a, b) {
+      return a - b;
+    });
+    return filteredSorted;
+  }
+  function _updateEmptyPositions() {
+    const filtered = gameMap.findEmpty();
+    return filtered;
+  }
+
+  function _arrayRemove(arr, value) {
     return arr.filter(function (positions) {
       return positions != value;
     });
@@ -240,6 +229,7 @@ const gameController = (obj) => {
     selectedField.removeEventListener("click", _useFieldAI, true);
   }
   function _move(index) {
+    _disableFields();
     if (!_isEmpty(gameMap.map[index])) return null;
     _fillField(index);
     _removeEventListener(index);
@@ -247,7 +237,6 @@ const gameController = (obj) => {
     [obj.turn, obj.NextPlayer] = ["X", "O"];
   }
   function _turnHandlerAI() {
-    // _playerTurn() === "X" ? _basicAI() : _useFieldSolo();
     if (_playerTurn() === "X") {
       _basicAI();
     } else {
@@ -263,6 +252,7 @@ const gameController = (obj) => {
     target.textContent = mark;
     obj.state = "is playing";
     gameMap.setMark(id, mark);
+    console.log(gameMap.map);
     target.removeEventListener("click", _useFieldAI, true);
     console.log(obj);
     obj.round++;
@@ -277,28 +267,7 @@ const gameController = (obj) => {
   function _handleDraw() {
     [obj.gameOver, obj.state] = ["true", "DRAW!"];
   }
-  // function _basicAI() {
-  //   console.log(obj);
-  //   let selectedField;
-  //   const mark = obj.playerX.getMark();
-  //   const filtered = gameMap.map.filter((field) => field.length === 0);
-  //   const maxIndex = filtered.length;
-  //   const id = Math.floor(Math.random() * (maxIndex - 1 + 1) + 1);
-  //   selectedField = document.getElementById(`${id}`);
-  //   selectedField.firstElementChild.textContent = mark;
-  //   gameMap.setMark(id, mark);
-  //   obj.turn = _playerTurn();
-  //   obj.round++;
-  //   selectedField.firstElementChild.removeEventListener(
-  //     "click",
-  //     _useFieldAI,
-  //     true
-  //   );
-  //   _handleGame();
-  //   // console.log(obj);
-  //   console.log(gameMap.map);
-  //   commentaryController(obj);
-  // }
+
   function _checkWinner() {
     return winConditions.some((combination) => {
       return combination.every(
@@ -318,11 +287,9 @@ const gameController = (obj) => {
   function _restart() {
     allFields.forEach((field) => (field.textContent = ""));
     gameMap.restart();
-    _enableFields();
+    _enableFieldsAI();
     [obj.round, obj.state, obj.turn, obj.NextPlayer] = [0, "is playing", "X"];
     commentaryController(obj);
-    // BUG - on restart, AI plays twice
-    // Possible Fix  - RestartFunc1, RestartFunc2 instead of _basicAI
     if (obj.mode === "AI") {
       _basicAI();
     } else {
