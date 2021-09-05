@@ -113,12 +113,10 @@ const gameController = (obj) => {
   // cache DOM
   const allFields = document.querySelectorAll(".press");
   const restartBtn = document.querySelector(".restart-btn");
-  const quitBtn = document.querySelector(".quit-btn");
   //   cache gameSettings
   let { playerX, playerO } = obj;
   // Binding events
   restartBtn.addEventListener("click", _restart, true);
-  quitBtn.addEventListener("click", _quit, true);
   function _enableFields() {
     switch (obj.mode) {
       case "AI":
@@ -296,10 +294,32 @@ const gameController = (obj) => {
       _useFieldDuo();
     }
   }
-  function _quit() {
-    window.location.href = "/";
-    quitBtn.removeEventListener("click", _quit, true);
+  // Minimax algo
+  function bestMove() {
+    // return minimaxAlgorithm(board, obj.playerX).index
   }
+  function minimaxAlgorithm(map, player) {
+    const emptyPositions = gameMap.findEmpty();
+    const moves = [];
+    if (_checkWinner() === true) {
+      if (_findWinner() === "X") {
+        return { score: -100 };
+      } else {
+        return { score: 100 };
+      }
+    } else if (_checkWinner() === false && obj.round === 9) {
+      return { score: 0 };
+    }
+    for (let i = 0; i < emptyPositions.length; i++) {
+      const move = {};
+      move.index = emptyPositions[i];
+      if (obj.turn === "X") {
+        const result = minimaxAlgorithm(gameMap.map);
+        move.score = result.score;
+      }
+    }
+  }
+  // could break up ai in another module and pass down the obj param
   _enableFields();
 };
 
