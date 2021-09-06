@@ -373,6 +373,18 @@ nav {
   color: #124469;
 }
 
+#difficulty ::placeholder {
+  text-align: center;
+}
+
+#difficulty ::-webkit-input-placeholder {
+  text-align: center;
+}
+
+#difficulty :-moz-placeholder {
+  text-align: center;
+}
+
 .difficulty-options {
   position: relative;
   background: none;

@@ -128,6 +128,15 @@ nav {
   appearance: none;
   background: $cultured;
   color: $indigo;
+  ::placeholder {
+    text-align: center;
+  }
+  ::-webkit-input-placeholder {
+    text-align: center;
+  }
+  :-moz-placeholder {
+    text-align: center;
+  }
 }
 .difficulty-options {
   position: relative;
@@ -265,3 +274,5 @@ footer {
     transform: rotate(360deg) scale(1.1);
   }
 }
+
+// TODO fix drop-down placeholder text align
