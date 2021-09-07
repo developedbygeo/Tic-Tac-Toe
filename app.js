@@ -1,6 +1,5 @@
 const gameMap = (() => {
   const map = ["", "", "", "", "", "", "", "", ""];
-  let tempMap = ["", "", "", "", "", "", "", "", ""];
   const setMark = (i, mark) => {
     if (i > map.length) return;
     map[i] = mark;
@@ -20,32 +19,15 @@ const gameMap = (() => {
     });
     return unselected;
   };
-  const findEmptyTest = () => {
-    let unselected = [];
-    let i;
-    tempMap.forEach(function (x, index) {
-      if (x.length === 0) {
-        i = index;
-        unselected.push(i);
-      }
-    });
-    return unselected;
-  };
   const restart = () => {
     map.forEach((mark, i, map) => (map[i] = ""));
   };
-  const updateMainMap = () => {
-    gameMap.tempMap = [...map];
-  };
   return {
     map,
-    tempMap,
     setMark,
     returnMark,
     findEmpty,
-    findEmptyTest,
     restart,
-    updateMainMap,
   };
 })();
 const playerFactory = (name, mark) => {
@@ -56,35 +38,6 @@ const playerFactory = (name, mark) => {
     return name;
   };
   return { name, mark, getName, getMark };
-};
-const AiFactory = (name, mark, difficulty) => {
-  const getDifficulty = () => {
-    return difficulty;
-  };
-  const isEmpty = (field) => {
-    return field.length === 0;
-  };
-  const mapCheck = () => {
-    return gameMap.map.filter((field) => isEmpty(field));
-  };
-  const randomMoveGenerator = () => {
-    const filtered = gameMap.map.filter((field) => field.length === 0);
-    const maxIndex = filtered.length;
-    const id = Math.floor(Math.random() * (maxIndex - 1 + 1) + 1);
-    // return id;
-    move(id);
-  };
-  const fillField = (index) => {
-    const selectedField = document.getElementById(`${index}`);
-    gameMap.setMark(index, mark);
-    selectedField.firstElementChild.textContent = mark;
-  };
-  const move = (index) => {
-    if (!isEmpty(gameMap.map[index])) return;
-    fillField(index);
-    start.gameSettings.round++;
-  };
-  return { getDifficulty, randomMoveGenerator, move };
 };
 const commentaryController = (obj) => {
   // cache DOM
@@ -107,20 +60,6 @@ const commentaryController = (obj) => {
     }
   }
   commentaryLive();
-};
-const AiController = () => {
-  const mark = "X";
-
-  function basicAI() {
-    let selectedField;
-    const filtered = gameMap.map.filter((field) => field.length === 0);
-    const maxIndex = filtered.length;
-    return random(0, maxIndex);
-  }
-  function random(min, max) {
-    Math.floor(Math.random() * (max - min)) + min;
-  }
-  return basicAI;
 };
 const gameController = (obj) => {
   const winConditions = [
@@ -160,13 +99,9 @@ const gameController = (obj) => {
       field.addEventListener("click", _useFieldSolo, true)
     );
   }
-
+  // handles the game state for duo mode
   function _handleGame() {
     switch (_checkWinner()) {
-      case true:
-        _disableFields();
-        _handleWin();
-        break;
       case false:
         if (obj.round < 9) {
           return;
@@ -174,14 +109,18 @@ const gameController = (obj) => {
           _handleDraw();
         }
         break;
+      case true:
+        _disableFields();
+        _handleWin();
+        break;
     }
   }
+  // handles the game state for solo
   function _handleGameAI() {
     switch (_checkWinner()) {
       case true:
         _handleWin();
         _disableFields(_useFieldSolo);
-        console.log(obj);
         break;
       case false:
         if (obj.round < 9) {
@@ -192,18 +131,12 @@ const gameController = (obj) => {
         break;
     }
   }
-  // function _disableFieldsAI() {
-  //   allFields.forEach((field) =>
-  //     field.removeEventListener("click", _useFieldSolo, true)
-  //   );
-  // }
   function _useFieldDuo(e) {
     if (!e) return;
     const field = e.target;
     const id = +field.parentElement.attributes[1].value;
     const mark = (obj.turn = _playerTurn());
     obj.NextPlayer = _nextPlayerTurn();
-    console.log(obj);
     field.textContent = mark;
     obj.state = "is playing";
     gameMap.setMark(id, mark);
@@ -211,7 +144,6 @@ const gameController = (obj) => {
     e.target.removeEventListener("click", _useFieldDuo, true);
     _handleGame();
     commentaryController(obj);
-    console.log(obj);
   }
   function _disableFields(func = _useFieldDuo) {
     allFields.forEach((field) =>
@@ -219,61 +151,52 @@ const gameController = (obj) => {
     );
   }
   function _useFieldAI(e) {
-    // TODO could add distinction about ai levels here
     _useFieldSolo(e);
   }
   // gets an array of empty indices and comes up with a random spot to play
   function _basicAI() {
     const id = _.sampleSize(_findEmptyPositions(), 1);
-    console.log(`Selected ID is ${id}`);
     _arrayRemove(_findEmptyPositions(), id);
-    console.log(`ID ${id} has been removed`);
-    console.log(`Current map state: ${_findEmptyPositions()}`);
     _disableFields(_useFieldSolo);
-    setTimeout(() => {
-      _move(id);
-      gameMap.updateMainMap();
-      console.log(obj);
-      _handleGameAI();
-      commentaryController(obj);
-    }, 550);
+    _move(id);
+    _handleGameAI();
+    commentaryController(obj);
     if (obj.gameOver === true) {
       _turnHandlerAI("stop");
     } else {
       _enableFieldsAI();
     }
-    console.log(_playerTurn());
   }
-  function _advancedAI() {
-    // console.log(bestMove());
-    bestMove();
-    // _disableFields(_useFieldSolo);
-    // setTimeout(() => {
-    //   _move(id);
-    //   gameMap.updateMainMap();
-    //   console.log(obj);
-    //   _handleGameAI();
-    //   commentaryController(obj);
-    // }, 550);
-    // if (obj.gameOver === true) {
-    //   _turnHandlerAI("stop");
-    // } else {
-    //   _enableFieldsAI();
-    // }
-
-    // _disableFields(_useFieldSolo);
-    // setTimeout(() => {
-    //   _move(minimaxSelection.index);
-    //   gameMap.updateMainMap();
-    //   console.log(obj);
-    //   _handleGameAI();
-    //   commentaryController(obj);
-    // }, 550);
-    // if (obj.gameOver === true) {
-    //   _turnHandlerAI("stop");
-    // } else {
-    //   _enableFieldsAI();
-    // }
+  // plays in an intermediate pattern, else picks randomly
+  function _intermediateAI() {
+    const map = _findEmptyPositions();
+    switch (obj.round) {
+      case 0:
+        firstOptimalMove();
+        break;
+      case 2:
+        map.includes(8) ? _move(8) : _move(6);
+        break;
+      case 4:
+        if (map.includes(2)) {
+          _move(2);
+        } else if (map.includes(0)) {
+          if (!map.includes(2) && !map.includes(8)) {
+            _move(5);
+          } else {
+            _move(0);
+          }
+        } else if (!map.includes(2) && !map.includes(8)) {
+          _move(6);
+        } else {
+          _basicAI;
+        }
+        break;
+      case 6:
+      case 8:
+        _basicAI();
+        break;
+    }
   }
 
   function _findEmptyPositions() {
@@ -292,7 +215,6 @@ const gameController = (obj) => {
       return positions != value;
     });
   }
-  // TODO replace the lines in _basicAI() with the following:
   function _isEmpty(field) {
     return field.length === 0;
   }
@@ -309,7 +231,11 @@ const gameController = (obj) => {
   function _move(index, selectedMap = gameMap.map) {
     _disableFields();
     if (!_isEmpty(selectedMap[index])) return null;
-    _fillField(index);
+    setTimeout(() => {
+      _fillField(index);
+      commentaryController(obj);
+    }, 550);
+
     _removeEventListener(index);
     obj.round++;
     [obj.turn, obj.NextPlayer] = ["X", "O"];
@@ -317,8 +243,7 @@ const gameController = (obj) => {
   function _turnHandlerAI(command) {
     if (command) return;
     if (_playerTurn() === "X") {
-      obj.AI === "Extreme" ? _advancedAI() : _basicAI();
-      // _basicAI();
+      obj.AI === "Medium" ? _intermediateAI() : _basicAI();
     } else {
       _useFieldSolo();
     }
@@ -332,53 +257,28 @@ const gameController = (obj) => {
     target.textContent = mark;
     obj.state = "is playing";
     gameMap.setMark(id, mark);
-    gameMap.updateMainMap();
-    console.log(gameMap.tempMap);
-    console.log(gameMap.map);
     target.removeEventListener("click", _useFieldAI, true);
-    console.log(obj);
     obj.round++;
     _handleGameAI();
     commentaryController(obj);
     if (obj.gameOver === true) {
-      console.log("stop");
       _turnHandlerAI("stop");
     } else {
       _turnHandlerAI();
     }
   }
-
   function _handleWin() {
     [obj.gameOver, obj.state, obj.winner] = [true, "WON!", _findWinner()];
   }
   function _handleDraw() {
     [obj.gameOver, obj.state] = ["true", "DRAW!"];
   }
-
   function _checkWinner() {
     return winConditions.some((combination) => {
       return combination.every(
         (index) => gameMap.returnMark(index) === obj.turn
       );
     });
-  }
-  function _checkWinnerV2() {
-    return winConditions.some((combination) => {
-      return combination.every(
-        (index) => gameMap.returnMark(index) === obj.turn
-      );
-    });
-  }
-  // TODO creating _checkWinnerTEST for testing purposes
-  function _checkWinnerTEST(map, player) {
-    let plays = map.reduce((a, e, i) => (e === player ? a.concat(i) : a), []);
-    let gameWon = null;
-    for (let [index, win] of winConditions.entries()) {
-      if (win.every((elem) => plays.indexOf(elem) > -1)) {
-        gameWon = { index: index, player: player };
-        break;
-      }
-    }
   }
   function _findWinner() {
     return obj.turn === "X" ? playerX.getName() : playerO.getName();
@@ -401,136 +301,22 @@ const gameController = (obj) => {
     ];
     commentaryController(obj);
     if (obj.mode === "AI") {
-      _basicAI();
+      obj.AI === "Medium" ? _intermediateAI() : _basicAI();
     } else {
       _useFieldDuo();
     }
   }
-  // Minimax algo
-
-  // function minimax(data, player){
-  //   const empty = gameMap.findEmpty(gameMap.tempMap)
-  //   if(_checkWinner() === true && obj.turn === "X"){
-  //     return {eval: 10}
-  //   }else if(_checkWinner() === true && obj.turn === "O"){
-  //     return {eval: -10}
-  //   }else{
-  //     return {eval: 0}
-  //   }
-
-  // }
-
-  // let scores = {
-  //   X: 10,
-  //   O: -10,
-  //   tie: 0,
-  // };
-
-  function bestMove() {
-    const board = gameMap.tempMap;
-    console.log(minimax(board, "X"));
+  function _checkEmpty() {
+    return gameMap.findEmpty();
   }
 
-  function minimax(board, player) {
-    const empty = gameMap.findEmptyTest;
-    if (obj.gameOver === true) {
-      if (obj.state !== "DRAW") {
-        if (obj.turn === "O") {
-          return { score: -10 };
-        } else if (obj.turn === "X") {
-          return { score: 10 };
-        }
-      } else {
-        return { score: 0 };
-      }
-    }
-    let moves = [];
-    for (let i = 0; i < empty.length; i++) {
-      let move = {};
-      move.index = board[empty[i]];
-      board[empty[i]] = player;
-      if (player === "X") {
-        const result = minimax(board, "O");
-        move.score = result.score;
-      } else {
-        const result = minimax(board, "X");
-        move.score = result.score;
-      }
-      board[empty[i]] = move.index;
-      moves.push(move);
-    }
-    let bestMove;
-    if (player === "X") {
-      const bestScore = -10000;
-      for (let i = 0; i < moves.length; i++) {
-        if (moves[i].score > bestScore) {
-          bestScore = moves[i].score;
-          bestMove = i;
-        }
-      }
-    } else {
-      const bestScore = 10000;
-      for (let i = 0; i < moves.length; i++) {
-        if (moves[i].score < bestScore) {
-          bestScore = moves[i].score;
-          bestMove = i;
-        }
-      }
-    }
-    return moves[bestMove];
+  function firstOptimalMove() {
+    _move(_checkEmpty()[4]);
+    _handleGameAI();
   }
 
-  // function minimaxAlgorithm(depth, isMax) {
-  //   const board = gameMap.tempMap;
-  //   // const winner = _checkWinner();
-  //   // const availablePositions = gameMap.findEmptyTest();
-  //   let move;
-
-  //   if (obj.gameOver === true) {
-  //     if (obj.turn === "O") {
-  //       return { score: -10 };
-  //     } else {
-  //       return { score: 10 };
-  //     }
-  //   } else if ((obj.state = "DRAW")) {
-  //     return { score: 0 };
-  //   }
-
-  //   // if (obj.gameOver === true) {
-  //   //   return { score: -10 };
-  //   // } else if (obj.gameOver === true && obj.turn == "X") {
-  //   //   return { score: 10 };
-  //   // } else if (board.length === 0) {
-  //   //   return { score: 0 };
-  //   // }
-  //   if (isMax) {
-  //     let bestScore = -10000;
-  //     board.forEach((pos) => {
-  //       board[pos] = "X";
-  //       let score = minimaxAlgorithm(depth + 1, false);
-  //       board[pos] = "";
-  //       if (score > bestScore);
-  //       bestScore = score;
-  //     });
-  //     return bestScore;
-  //   } else {
-  //     let bestScore = 10000;
-  //     board.forEach((pos) => {
-  //       board[pos] = "O";
-  //       let score = minimaxAlgorithm(depth + 1, true);
-  //       board[pos] = "";
-  //       if (score < bestScore) {
-  //         bestScore = score;
-  //       }
-  //     });
-  //     return bestScore;
-  //   }
-  // }
-  // could break up ai in another module and pass down the obj param
   _enableFields();
 };
-
-// TODO for difficult can look up certain tic tac toe patterns and add random moves afterwards
 
 const start = (() => {
   let gameSettings = {
