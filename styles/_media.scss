@@ -30,10 +30,20 @@
 }
 @media screen and (min-width: 801px) {
   html {
-    font-size: 62.5%;
+    font-size: 58.5%;
   }
   .btn {
     padding: 2.4rem 5rem;
+  }
+  .grid {
+    height: 98%;
+    width: 50%;
+  }
+  .wrap-buttons {
+    width: 50%;
+  }
+  .btn {
+    width: 100%;
   }
 }
 @media screen and (min-width: 1000px) {
@@ -47,19 +57,9 @@
   html {
     font-size: 68.5%;
   }
-  .grid {
-    height: 98%;
-    width: 50%;
-  }
-  .wrap-buttons {
-    width: 50%;
-  }
-  .btn {
-    width: 100%;
-  }
 }
 @media screen and (min-width: 1980px) {
   html {
-    font-size: 78.5%;
+    font-size: 70.5%;
   }
 }

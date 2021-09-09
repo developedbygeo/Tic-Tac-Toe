@@ -648,22 +648,10 @@ footer {
 
 @media screen and (min-width: 801px) {
   html {
-    font-size: 62.5%;
+    font-size: 58.5%;
   }
   .btn {
     padding: 2.4rem 5rem;
-  }
-}
-
-@media screen and (min-width: 1000px) {
-  .player-names form {
-    height: 60%;
-  }
-}
-
-@media screen and (min-width: 1280px) {
-  html {
-    font-size: 68.5%;
   }
   .grid {
     height: 98%;
@@ -677,9 +665,21 @@ footer {
   }
 }
 
+@media screen and (min-width: 1000px) {
+  .player-names form {
+    height: 60%;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  html {
+    font-size: 68.5%;
+  }
+}
+
 @media screen and (min-width: 1980px) {
   html {
-    font-size: 78.5%;
+    font-size: 70.5%;
   }
 }
 /*# sourceMappingURL=style.css.map */
