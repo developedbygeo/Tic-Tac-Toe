@@ -72,6 +72,20 @@ const gameController = (obj) => {
     [1, 4, 7],
     [2, 5, 8],
   ];
+  // Confetti
+  const jsConfetti = new JSConfetti();
+  const confettiArgs = {
+    confettiColors: [
+      "#a864fd",
+      "#29cdff",
+      "#78ff44",
+      "#ff718d",
+      "#fdff6a",
+      "#f8b5bf",
+    ],
+    confettiRadius: 5,
+    confettiNumber: 700,
+  };
   // cache DOM
   const allFields = document.querySelectorAll(".press");
   const restartBtn = document.querySelector(".restart-btn");
@@ -233,9 +247,9 @@ const gameController = (obj) => {
     if (!_isEmpty(selectedMap[index])) return null;
     setTimeout(() => {
       _fillField(index);
+      _handleGameAI();
       commentaryController(obj);
     }, 550);
-
     _removeEventListener(index);
     obj.round++;
     [obj.turn, obj.NextPlayer] = ["X", "O"];
@@ -269,6 +283,7 @@ const gameController = (obj) => {
   }
   function _handleWin() {
     [obj.gameOver, obj.state, obj.winner] = [true, "WON!", _findWinner()];
+    jsConfetti.addConfetti(confettiArgs);
   }
   function _handleDraw() {
     [obj.gameOver, obj.state] = ["true", "DRAW!"];
