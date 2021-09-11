@@ -91,7 +91,7 @@ nav {
 .start-btn {
   letter-spacing: 0.15rem;
   @include button(3rem 8rem, none, 0.5rem);
-  @include border-clr($iris, $carolina, 4px, bottom, right);
+  @include border-clr($iris2, $carolina, 4px, bottom, right);
 }
 .select-btn {
   letter-spacing: 0.15rem;
@@ -191,7 +191,8 @@ nav {
     }
     input:focus + label span,
     input:valid + label span {
-      color: $blue-crayola;
+      // color: $blue-crayola;
+      color: $carolina2;
       transform: translateY(-100%);
     }
     input:focus,
@@ -205,7 +206,7 @@ nav {
 }
 .play-pl {
   @include button(1.5rem, none, 0.5rem);
-  @include border-clr($carolina, $iris, 4px, bottom, left);
+  @include border-clr($carolina2, $iris, 4px, bottom, left);
   width: 100%;
   padding-block: 1rem;
   transition: all 200ms linear;
