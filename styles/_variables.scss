@@ -3,15 +3,17 @@ $cultured: #eeedf0;
 $indigo: #124469;
 $blue-saph: #37566ede;
 $iris: #4c57e0;
+$iris2: #2936e4;
 $carolina: #41a1e0;
+$carolina2: #1a88d1;
 $blue-crayola: #228cd3;
 $turquoise: #36e0c9;
-$copper: #e08158;
+$copper: #f35917;
 $flame: #d96330;
-$flame2: rgb(182, 63, 12);
+$flame2: rgb(245, 13, 13);
 $gold: #e0ba2b;
-$gold-metallic: #c39f1d;
-$maize: #ead071;
+$gold-metallic: #f18913;
+$maize: #f3c729;
 
 @mixin flex($justify, $align, $dir) {
   display: flex;
