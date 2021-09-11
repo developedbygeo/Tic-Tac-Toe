@@ -27,6 +27,14 @@
   #name2 {
     width: 100%;
   }
+  .play-pl {
+    width: 80%;
+    padding-block: 2rem;
+    text-align: center;
+  }
+  .form-wrap-btn {
+    @include flex(center, center, row);
+  }
 }
 @media screen and (min-width: 801px) {
   html {
