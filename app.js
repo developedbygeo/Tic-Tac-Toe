@@ -102,6 +102,9 @@ const gameController = (obj) => {
         );
         break;
       case "Duo":
+        obj.NextPlayer = "X";
+        commentaryController(obj);
+        console.log(obj);
         allFields.forEach((field) =>
           field.addEventListener("click", _useFieldDuo, true)
         );
@@ -306,7 +309,7 @@ const gameController = (obj) => {
   function _restart() {
     allFields.forEach((field) => (field.textContent = ""));
     gameMap.restart();
-    _enableFieldsAI();
+    _enableFields();
     [obj.round, obj.gameOver, obj.state, obj.turn, obj.NextPlayer] = [
       0,
       false,
@@ -314,6 +317,7 @@ const gameController = (obj) => {
       "X",
     ];
     commentaryController(obj);
+    console.log(obj);
     if (obj.mode === "AI") {
       obj.AI === "Medium" ? _intermediateAI() : _basicAI();
     } else {
