@@ -174,7 +174,6 @@ const gameController = (obj) => {
     _disableFields(_useFieldSolo);
     _move(id);
     _handleGameAI();
-    commentaryController(obj);
     if (obj.gameOver === true) {
       _turnHandlerAI("stop");
     } else {
