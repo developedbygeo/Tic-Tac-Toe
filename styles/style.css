@@ -605,6 +605,10 @@ footer {
   font-style: italic;
 }
 
+.footer-img {
+  margin-top: 0.5rem;
+}
+
 .gh-link i {
   font-size: 1.7rem;
   color: #124469;
