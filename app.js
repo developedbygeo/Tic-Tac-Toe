@@ -104,7 +104,6 @@ const gameController = (obj) => {
       case "Duo":
         obj.NextPlayer = "X";
         commentaryController(obj);
-        console.log(obj);
         allFields.forEach((field) =>
           field.addEventListener("click", _useFieldDuo, true)
         );
@@ -317,7 +316,6 @@ const gameController = (obj) => {
       "X",
     ];
     commentaryController(obj);
-    console.log(obj);
     if (obj.mode === "AI") {
       obj.AI === "Medium" ? _intermediateAI() : _basicAI();
     } else {
