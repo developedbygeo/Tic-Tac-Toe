@@ -71,6 +71,18 @@ nav {
 }
 .quit-btn {
   background: $flame;
+  a {
+    display: inline-block;
+    width: 100%;
+  }
+}
+.restart-btn,
+.quit-btn {
+  transition: all 100ms ease-in-out;
+}
+.restart-btn:hover,
+.quit-btn:hover {
+  transform: scale(1.05);
 }
 .start {
   height: 90vh;
@@ -217,6 +229,9 @@ nav {
 }
 .play-pl:active {
   transform: scale(0.98);
+}
+.play-pl:hover {
+  transform: scale(1.05);
 }
 .inactive {
   @include visibility(0, hidden, none);

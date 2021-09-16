@@ -150,6 +150,21 @@ nav {
   background: #d96330;
 }
 
+.quit-btn a {
+  display: inline-block;
+  width: 100%;
+}
+
+.restart-btn,
+.quit-btn {
+  transition: all 100ms ease-in-out;
+}
+
+.restart-btn:hover,
+.quit-btn:hover {
+  transform: scale(1.05);
+}
+
 .start {
   height: 90vh;
   opacity: 1;
@@ -537,6 +552,10 @@ nav {
 
 .play-pl:active {
   transform: scale(0.98);
+}
+
+.play-pl:hover {
+  transform: scale(1.05);
 }
 
 .inactive {
